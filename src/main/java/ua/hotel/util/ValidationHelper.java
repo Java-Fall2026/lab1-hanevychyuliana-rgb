@@ -1,32 +1,37 @@
 package ua.hotel.util;
 
-public class ValidationHelper {
+public final class ValidationHelper {
+    private ValidationHelper() {}
 
-    public static <T> T requireNonNull(T value, String fieldName) {
-        if (value == null) {
-            throw new IllegalArgumentException("Field '" + fieldName + "' cannot be null. Expected non-null value, but got: null");
+    public static <T> T requireNonNull(T obj, String paramName) {
+        if (obj == null) {
+            throw new IllegalArgumentException(paramName + " cannot be null");
         }
-        return value;
+        return obj;
     }
 
-    public static String requireNonNullOrBlank(String value, String fieldName) {
-        requireNonNull(value, fieldName);
-        if (value.trim().isEmpty()) {
-            throw new IllegalArgumentException("Field '" + fieldName + "' cannot be empty/blank. Got: '" + value + "'");
+    public static String requireNonEmpty(String str, String paramName) {
+        requireNonNull(str, paramName);
+        if (str.isBlank()) {
+            throw new IllegalArgumentException(paramName + " cannot be empty");
         }
-        return value;
+        return str;
     }
 
-    public static int requireStrictlyPositive(int value, String fieldName) {
+    public static String requireNonEmptyTrimmed(String str, String paramName) {
+        return requireNonEmpty(str, paramName).trim();
+    }
+
+    public static double requirePositive(double value, String paramName) {
         if (value <= 0) {
-            throw new IllegalArgumentException("Field '" + fieldName + "' must be strictly positive (> 0). Expected > 0, but got: " + value);
+            throw new IllegalArgumentException(paramName + " must be strictly positive");
         }
         return value;
     }
 
-    public static double requireStrictlyPositive(double value, String fieldName) {
+    public static int requirePositive(int value, String paramName) {
         if (value <= 0) {
-            throw new IllegalArgumentException("Field '" + fieldName + "' must be strictly positive (> 0). Expected > 0, but got: " + value);
+            throw new IllegalArgumentException(paramName + " must be strictly positive");
         }
         return value;
     }
