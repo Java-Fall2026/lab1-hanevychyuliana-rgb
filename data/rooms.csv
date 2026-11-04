@@ -1,0 +1,10 @@
+mkdir -p data
+cat << 'EOF' > data/rooms.csv
+roomNumber,type,pricePerNight
+101,SINGLE,850.0
+INVALID,DOUBLE,1200.0
+102,SUITE,-500.0
+103,DELUXE,2400.0
+104,UNKNOWN_TYPE,1500.0
+105,SINGLE,950.0
+EOF
