@@ -1,109 +1,100 @@
 package ua.hotel;
 
-import ua.hotel.exception.DuplicateIdentityException;
-import ua.hotel.loader.RoomCsvLoader;
-import ua.hotel.model.Booking;
-import ua.hotel.model.BookingStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ua.hotel.model.Guest;
-import ua.hotel.model.HotelPayment;
 import ua.hotel.model.Room;
 import ua.hotel.model.RoomType;
-import ua.hotel.repository.GenericRepository;
+import ua.hotel.repository.GuestRepository;
+import ua.hotel.repository.RoomRepository;
+import ua.hotel.repository.SortOrder;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Stream;
 
 public class Main {
 
+    private static final Logger log = LoggerFactory.getLogger(Main.class);
+
     public static void main(String[] args) {
-        System.out.println("=== Лабораторна робота №4: Generics, колекції та власний репозиторій ===\n");
+        System.out.println("=== Лабораторна робота №5: Comparable, Comparator та Stream API ===\n");
 
-        // 1. Три репозиторії різних типів (1 змінюваний клас Room + 2 record-и Guest і HotelPayment)
-        GenericRepository<Room> roomRepo = new GenericRepository<>(
-                "RoomRepository",
-                room -> String.valueOf(room.getRoomNumber())
+        // 1. Наповнення двох доменних репозиторіїв
+        RoomRepository roomRepo = new RoomRepository();
+        GuestRepository guestRepo = new GuestRepository();
+
+        roomRepo.add(new Room(101, RoomType.SINGLE, 900.0));
+        roomRepo.add(new Room(102, RoomType.DOUBLE, 1500.0));
+        roomRepo.add(new Room(103, RoomType.SUITE, 2800.0));
+        roomRepo.add(new Room(104, RoomType.SINGLE, 950.0)); // Схожа ціна для тесту
+
+        guestRepo.add(new Guest("AA123456", "Юліана", "Ганевич", LocalDate.of(2004, 5, 15), null));
+        guestRepo.add(new Guest("BB654321", "Олександр", "Коваль", LocalDate.of(1995, 8, 20), null));
+        guestRepo.add(new Guest("CC111222", "Марія", "Петренко", LocalDate.of(1990, 2, 10), null));
+
+        // 2. Сортування за природним порядком та доменними критеріями (багаторівневий)
+        System.out.println("--- 2. Сортування кімнат ---");
+        List<Room> sortedByPriceAndNum = roomRepo.findAllSortedByPriceThenNumber();
+        System.out.println("Кімнати за ціною (зрост.) потім за номером: " + sortedByPriceAndNum.size() + " шт.");
+
+        List<Room> sortedByTypeAndPrice = roomRepo.findAllSortedByTypeAndPriceDesc();
+        System.out.println("Кімнати за типом потім за ціною (спад.): " + sortedByTypeAndPrice.size() + " шт.");
+
+        // 3. findAllSortedByIdentity в обидва боки (ASC і DESC)
+        System.out.println("\n--- 3. findAllSortedByIdentity (ASC та DESC) ---");
+        List<Guest> guestsAsc = guestRepo.findAllSortedByIdentity(SortOrder.ASC);
+        List<Guest> guestsDesc = guestRepo.findAllSortedByIdentity(SortOrder.DESC);
+        System.out.println("Гості ASC (перший паспорт): " + (guestsAsc.isEmpty() ? "N/A" : guestsAsc.get(0).passportNumber()));
+        System.out.println("Гості DESC (перший паспорт): " + (guestsDesc.isEmpty() ? "N/A" : guestsDesc.get(0).passportNumber()));
+
+        // 4. TreeSet із компаратором, не узгодженим з equals (Частина 1, пункт 5)
+        System.out.println("\n--- 4. TreeSet із компаратором за ціною ---");
+        // Компаратор порівнює кімнати ТІЛЬКИ за ціною. Якщо ціни однакові, вважає їх рівними (0),
+        // навіть якщо номери кімнат різні!
+        Comparator<Room> priceOnlyComparator = Comparator.comparingDouble(Room::getPricePerNight);
+        Set<Room> treeSet = new TreeSet<>(priceOnlyComparator);
+
+        Room r1 = new Room(101, RoomType.SINGLE, 1000.0);
+        Room r2 = new Room(104, RoomType.SINGLE, 1000.0); // Інший номер, але така сама ціна!
+
+        treeSet.add(r1);
+        treeSet.add(r2);
+        System.out.println("Кількість елементів у TreeSet (при однаковій ціні та не узгодженому equals): " + treeSet.size());
+        System.out.println("(Очікуємо 1, бо TreeSet вважає їх дублікатами через compareTo/compare, який повертає 0)");
+
+        // 5. Пошук через Stream API (точний/частковий, діапазон, дві умови, Optional)
+        System.out.println("\n--- 5. Пошук через Stream API ---");
+        System.out.println("Пошук кімнат із типом 'SINGLE': " + roomRepo.searchByType("SINGLE").size() + " шт.");
+        System.out.println("Пошук кімнат у діапазоні цін [900, 1600]: " + roomRepo.searchByPriceRange(900.0, 1600.0).size() + " шт.");
+        
+        // Робота з Optional (без get() + isPresent, а через orElse, ifPresent тощо за умовою)
+        roomRepo.findFirstCheapestRoom().ifPresent(room -> 
+            System.out.println("Знайдено найдешевшу кімнату: №" + room.getRoomNumber() + " за " + room.getPricePerNight() + " UAH")
         );
 
-        GenericRepository<Guest> guestRepo = new GenericRepository<>(
-                "GuestRepository",
-                Guest::passportNumber
-        );
+        // 6. Групування та агрегація
+        System.out.println("\n--- 6. Групування та агрегація ---");
+        System.out.println("Середня ціна кімнат: " + roomRepo.getAveragePrice() + " UAH");
+        System.out.println("Групування гостей за роком народження (counting): " + guestRepo.countGuestsByBirthYear());
 
-        GenericRepository<HotelPayment> paymentRepo = new GenericRepository<>(
-                "PaymentRepository",
-                HotelPayment::paymentId
-        );
-
-        Room room201 = new Room(201, RoomType.SINGLE, 900.0);
-        Room room202 = new Room(202, RoomType.DELUXE, 2500.0);
-        roomRepo.add(room201);
-        roomRepo.add(room202);
-
-        Guest guest1 = new Guest("AA123456", "Юліана", "Ганевич", LocalDate.of(2004, 5, 15), null);
-        Guest guest2 = new Guest("BB654321", "Олександр", "Коваль", LocalDate.of(1995, 8, 20), null);
-        guestRepo.add(guest1);
-        guestRepo.add(guest2);
-
-        Booking booking = new Booking(
-                room201,
-                guest1,
-                LocalDate.of(2026, 6, 1),
-                LocalDate.of(2026, 6, 5),
-                BookingStatus.CONFIRMED
-        );
-        HotelPayment payment1 = new HotelPayment("PAY-8801", booking, 3600.0, LocalDate.of(2026, 6, 1), null);
-        paymentRepo.add(payment1);
-
-        System.out.println("--- 1. Пошук за identity у трьох репозиторіях (знайдено і не знайдено) ---");
-        System.out.println("Кімната 201 (знайдено): " + roomRepo.findByIdentity("201"));
-        System.out.println("Кімната 999 (не знайдено): " + roomRepo.findByIdentity("999"));
-        System.out.println("Гість AA123456 (знайдено): " + guestRepo.findByIdentity("AA123456"));
-        System.out.println("Гість XX000000 (не знайдено): " + guestRepo.findByIdentity("XX000000"));
-        System.out.println("Оплата PAY-8801 (знайдено): " + paymentRepo.findByIdentity("PAY-8801"));
-        System.out.println("Оплата PAY-0000 (не знайдено): " + paymentRepo.findByIdentity("PAY-0000"));
-
-        // 2. Наповнення репозиторію з CSV-файла ЛР3 (містить дублікат кімнати 101)
-        System.out.println("\n--- 2. Наповнення репозиторію з CSV-файла (data/rooms.csv) ---");
-        GenericRepository<Room> csvRoomRepo = new GenericRepository<>(
-                "CsvRoomRepository",
-                room -> String.valueOf(room.getRoomNumber())
-        );
-        RoomCsvLoader loader = new RoomCsvLoader();
-        Path csvPath = Paths.get("data", "rooms.csv");
-        List<Room> loadedRooms = loader.loadRooms(csvPath);
-
-        for (Room room : loadedRooms) {
-            boolean added = csvRoomRepo.addIfAbsent(room);
-            if (added) {
-                System.out.println("Додано кімнату з CSV: №" + room.getRoomNumber() + " (" + room.getType() + ")");
-            } else {
-                System.out.println("Відхилено дублікат із CSV: кімната №" + room.getRoomNumber() + " вже є в репозиторії");
-            }
-        }
-        System.out.println("Підсумкова кількість унікальних кімнат у CsvRoomRepository: " + csvRoomRepo.size());
-
-        // 3. Додавання дубліката через add (із перехопленням) і через addIfAbsent
-        System.out.println("\n--- 3. Додавання дубліката через add() та addIfAbsent() ---");
-        Guest duplicateGuest = new Guest("AA123456", "ІншеІм'я", "ІншеПрізвище", LocalDate.of(1999, 1, 1), null);
+        // 7. Одноразовість стріму (Частина 2, пункт 10)
+        System.out.println("\n--- 7. Демонстрація одноразовості стріму ---");
+        Stream<Room> roomStream = roomRepo.stream();
+        long count = roomStream.count(); // Перше споживання стріму
+        System.out.println("Успішно пораховано елементів у стрімі: " + count);
 
         try {
-            guestRepo.add(duplicateGuest);
-        } catch (DuplicateIdentityException e) {
-            System.out.println("Перехоплено DuplicateIdentityException при виклику add(): " + e.getMessage());
+            // Друга спроба використати той самий стрім має кинути IllegalStateException
+            roomStream.forEach(System.out::println);
+        } catch (IllegalStateException e) {
+            log.warn("Перехоплено виключення повторного використання стріму: {}", e.getMessage());
+            System.out.println("Перехоплено очікуване виключення: стрім уже закритий або спожитий!");
         }
 
-        boolean addedIfAbsent = guestRepo.addIfAbsent(duplicateGuest);
-        System.out.println("Результат addIfAbsent() на тому ж дублікаті: " + addedIfAbsent
-                + " (розмір репозиторію не змінився: " + guestRepo.size() + ")");
-
-        // 4. Видалення наявного й відсутнього елемента
-        System.out.println("\n--- 4. Видалення наявного й відсутнього елемента ---");
-        boolean removedExisting = roomRepo.removeByIdentity("202");
-        boolean removedMissing = roomRepo.removeByIdentity("777");
-        System.out.println("Видалення наявної кімнати 202: " + removedExisting);
-        System.out.println("Видалення відсутньої кімнати 777: " + removedMissing);
-        System.out.println("Поточний розмір RoomRepository: " + roomRepo.size());
+        log.info("Програму ЛР5 успішно виконано.");
     }
 }
