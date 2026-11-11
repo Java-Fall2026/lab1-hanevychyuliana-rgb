@@ -5,10 +5,13 @@ import org.slf4j.LoggerFactory;
 import ua.hotel.exception.DuplicateIdentityException;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Generic in-memory repository for storing domain entities by their unique identity.
@@ -48,11 +51,6 @@ public class GenericRepository<T> {
         log.info("[{}] Added item with identity '{}'", name, id);
     }
 
-    /**
-     * Adds an item only if its identity is not already present in the repository.
-     *
-     * @return true if added, false if duplicate was ignored
-     */
     public boolean addIfAbsent(T item) {
         String id = validateAndExtractId(item);
         if (storage.containsKey(id)) {
@@ -64,9 +62,6 @@ public class GenericRepository<T> {
         return true;
     }
 
-    /**
-     * Adds all items from the given collection using an upper-bounded wildcard.
-     */
     public void addAll(Collection<? extends T> items) {
         if (items == null) {
             log.error("[{}] Cannot addAll from a null collection", name);
@@ -77,11 +72,6 @@ public class GenericRepository<T> {
         }
     }
 
-    /**
-     * Removes an element by its identity.
-     *
-     * @return true if removed, false if not found
-     */
     public boolean removeByIdentity(String identity) {
         validateIdentityString(identity);
         T removed = storage.remove(identity);
@@ -94,9 +84,6 @@ public class GenericRepository<T> {
         }
     }
 
-    /**
-     * Finds an element by its identity.
-     */
     public Optional<T> findByIdentity(String identity) {
         validateIdentityString(identity);
         T item = storage.get(identity);
@@ -109,18 +96,47 @@ public class GenericRepository<T> {
         }
     }
 
-    /**
-     * Returns an unmodifiable copy of all elements in the repository.
-     */
     public List<T> findAll() {
         return List.copyOf(storage.values());
     }
 
-    /**
-     * Returns the number of elements in the repository.
-     */
     public int size() {
         return storage.size();
+    }
+
+    /**
+     * Returns a sequential Stream over the elements in this repository.
+     * <p>
+     * Unlike {@link #findAll()} which returns an unmodifiable defensive copy (a snapshot List),
+     * a Stream operates directly on the underlying data source. Once a terminal operation
+     * is executed, the stream is consumed and cannot be reused.
+     */
+    public Stream<T> stream() {
+        return storage.values().stream();
+    }
+
+    public List<T> findAllSorted(Comparator<T> comparator) {
+        if (comparator == null) {
+            throw new IllegalArgumentException("Comparator must not be null");
+        }
+        log.info("[{}] Sorting all elements using custom comparator", name);
+        return stream()
+                .sorted(comparator)
+                .collect(Collectors.toUnmodifiableList());
+    }
+
+    public List<T> findAllSortedByIdentity(SortOrder order) {
+        if (order == null) {
+            throw new IllegalArgumentException("SortOrder must not be null");
+        }
+        log.info("[{}] Sorting all elements by identity with order: {}", name, order);
+        Comparator<T> comparator = Comparator.comparing(item -> extractor.identityOf(item));
+        if (order == SortOrder.DESC) {
+            comparator = comparator.reversed();
+        }
+        return stream()
+                .sorted(comparator)
+                .collect(Collectors.toUnmodifiableList());
     }
 
     private String validateAndExtractId(T item) {
