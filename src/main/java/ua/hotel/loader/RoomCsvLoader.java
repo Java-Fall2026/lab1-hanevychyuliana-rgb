@@ -58,8 +58,16 @@ public class RoomCsvLoader {
 
         try {
             int roomNumber = Integer.parseInt(parts[0].trim());
+            if (roomNumber <= 0) {
+                throw new InvalidDataException("Room number must be positive at line " + lineNumber);
+            }
+
             RoomType roomType = RoomType.valueOf(parts[1].trim().toUpperCase());
+            
             double price = Double.parseDouble(parts[2].trim());
+            if (price <= 0) {
+                throw new InvalidDataException("Price per night must be positive at line " + lineNumber);
+            }
 
             return new Room(roomNumber, roomType, price);
         } catch (IllegalArgumentException e) {

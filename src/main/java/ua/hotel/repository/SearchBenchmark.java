@@ -26,16 +26,15 @@ public class SearchBenchmark {
 
         System.out.println("Populating repository with " + TOTAL_ELEMENTS + " elements...");
         for (int i = 1; i <= TOTAL_ELEMENTS; i++) {
-            String passport = "PASS-" + i;
+            String passport = String.format("AA%06d", i);
             repository.add(new Guest(passport, "FirstName", "LastName", birthDate, createdAt));
         }
 
-        // Obtain the list ONCE before measurements as required by the specification
         List<Guest> itemsList = repository.findAll();
 
-        String firstId = "PASS-1";
-        String lastId = "PASS-" + TOTAL_ELEMENTS;
-        String missingId = "PASS-999999";
+        String firstId = "AA000001";
+        String lastId = String.format("AA%06d", TOTAL_ELEMENTS);
+        String missingId = "ZZ999999";
 
         System.out.println("Running JVM warm-up...");
         for (int i = 0; i < WARMUP_RUNS; i++) {
