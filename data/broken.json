@@ -1,0 +1,4 @@
+[
+  {"roomNumber": 101, "type": "SINGLE", "pricePerNight": 850.0
+  {"roomNumber": 102, "type": "DOUBLE", "pricePerNight": 1200.0}
+]

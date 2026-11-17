@@ -1,0 +1,21 @@
+[
+  {"roomNumber": 101, "type": "SINGLE", "pricePerNight": 850.0},
+  {"roomNumber": 102, "type": "DOUBLE", "pricePerNight": 1200.0},
+  {"roomNumber": 103, "type": "SUITE", "pricePerNight": 2500.0},
+  {"roomNumber": 104, "type": "SINGLE", "pricePerNight": 900.0},
+  {"roomNumber": 105, "type": "DELUXE", "pricePerNight": 1800.0},
+  {"roomNumber": 106, "type": "SINGLE", "pricePerNight": 850.0},
+  {"roomNumber": 107, "type": "DOUBLE", "pricePerNight": 1300.0},
+  {"roomNumber": 108, "type": "SUITE", "pricePerNight": 2200.0},
+  {"roomNumber": 109, "type": "SINGLE", "pricePerNight": 950.0},
+  {"roomNumber": 110, "type": "DELUXE", "pricePerNight": 1900.0},
+  {"roomNumber": 111, "type": "SINGLE", "pricePerNight": 800.0},
+  {"roomNumber": 112, "type": "DOUBLE", "pricePerNight": 1400.0},
+  {"roomNumber": 113, "type": "SUITE", "pricePerNight": 3000.0},
+  {"roomNumber": 114, "type": "SINGLE", "pricePerNight": 880.0},
+  {"roomNumber": 115, "type": "DELUXE", "pricePerNight": 2100.0},
+  {"roomNumber": 101, "type": "DOUBLE", "pricePerNight": 1100.0},
+  {"roomNumber": -5, "type": "SINGLE", "pricePerNight": 500.0},
+  {"roomNumber": 116, "type": null, "pricePerNight": 700.0},
+  {"roomNumber": 117, "type": "SINGLE", "pricePerNight": 5.0}
+]
