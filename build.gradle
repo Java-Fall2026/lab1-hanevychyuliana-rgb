@@ -3,50 +3,38 @@ plugins {
     id 'application'
 }
 
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
-    }
-}
-
 repositories {
     mavenCentral()
 }
 
+dependencies {
+    // Jackson для JSON, YAML та дат
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.15.2'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.2'
+
+    // Jakarta Validation
+    implementation 'org.hibernate.validator:hibernate-validator:8.0.1.Final'
+    implementation 'org.glassfish.expressly:expressly:5.0.0'
+
+
+    // SLF4J та Logback
+    implementation 'org.slf4j:slf4j-api:2.0.9'
+    implementation 'ch.qos.logback:logback-classic:1.4.11'
+
+    // JUnit 5
+        // JUnit 5
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.10.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.10.0'
+}
+
+// Вказуємо Gradle, який саме клас є головним ( Main )
 application {
     mainClass = 'ua.hotel.Main'
 }
 
-tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8'
-}
-
-tasks.withType(JavaExec).configureEach {
-    defaultCharacterEncoding = 'UTF-8'
-}
-
-dependencies {
-    // Logging SLF4J + Logback
-    implementation 'org.slf4j:slf4j-api:2.0.12'
-    runtimeOnly    'ch.qos.logback:logback-classic:1.5.3'
-
-    // Testing JUnit 5
-    testImplementation platform('org.junit:junit-bom:6.1.3')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
-    testRuntimeOnly    'org.junit.platform:junit-platform-launcher'
-}
-
-test {
-    useJUnitPlatform()
-}
-
-// --- lab3: unit tests ---
-dependencies {
-    testImplementation platform('org.junit:junit-bom:6.1.3')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
-    testRuntimeOnly    'org.junit.platform:junit-platform-launcher'
-}
- 
 test {
     useJUnitPlatform()
 }

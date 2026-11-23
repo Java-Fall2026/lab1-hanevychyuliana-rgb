@@ -1,0 +1,76 @@
+[ {
+  "roomNumber" : 101,
+  "type" : "SINGLE",
+  "pricePerNight" : 850.0,
+  "createdAt" : "2026-11-17T16:16:11.017361"
+}, {
+  "roomNumber" : 103,
+  "type" : "SUITE",
+  "pricePerNight" : 2500.0,
+  "createdAt" : "2026-11-17T16:16:11.017443"
+}, {
+  "roomNumber" : 104,
+  "type" : "SINGLE",
+  "pricePerNight" : 900.0,
+  "createdAt" : "2026-11-17T16:16:11.017463"
+}, {
+  "roomNumber" : 105,
+  "type" : "DELUXE",
+  "pricePerNight" : 1800.0,
+  "createdAt" : "2026-11-17T16:16:11.01748"
+}, {
+  "roomNumber" : 106,
+  "type" : "SINGLE",
+  "pricePerNight" : 850.0,
+  "createdAt" : "2026-11-17T16:16:11.017498"
+}, {
+  "roomNumber" : 107,
+  "type" : "DOUBLE",
+  "pricePerNight" : 1300.0,
+  "createdAt" : "2026-11-17T16:16:11.017516"
+}, {
+  "roomNumber" : 108,
+  "type" : "SUITE",
+  "pricePerNight" : 2200.0,
+  "createdAt" : "2026-11-17T16:16:11.017531"
+}, {
+  "roomNumber" : 109,
+  "type" : "SINGLE",
+  "pricePerNight" : 950.0,
+  "createdAt" : "2026-11-17T16:16:11.017544"
+}, {
+  "roomNumber" : 110,
+  "type" : "DELUXE",
+  "pricePerNight" : 1900.0,
+  "createdAt" : "2026-11-17T16:16:11.017558"
+}, {
+  "roomNumber" : 111,
+  "type" : "SINGLE",
+  "pricePerNight" : 800.0,
+  "createdAt" : "2026-11-17T16:16:11.01757"
+}, {
+  "roomNumber" : 112,
+  "type" : "DOUBLE",
+  "pricePerNight" : 1400.0,
+  "createdAt" : "2026-11-17T16:16:11.017583"
+}, {
+  "roomNumber" : 113,
+  "type" : "SUITE",
+  "pricePerNight" : 3000.0,
+  "createdAt" : "2026-11-17T16:16:11.017596"
+}, {
+  "roomNumber" : 114,
+  "type" : "SINGLE",
+  "pricePerNight" : 880.0,
+  "createdAt" : "2026-11-17T16:16:11.01761"
+}, {
+  "roomNumber" : 115,
+  "type" : "DELUXE",
+  "pricePerNight" : 2100.0,
+  "createdAt" : "2026-11-17T16:16:11.017623"
+}, {
+  "roomNumber" : 999,
+  "type" : "DELUXE",
+  "pricePerNight" : 3500.0,
+  "createdAt" : "2026-11-17T16:16:11.05693"
+} ]
