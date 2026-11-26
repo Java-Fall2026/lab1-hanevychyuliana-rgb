@@ -1,0 +1,7 @@
+[
+  { "roomNumber": 101, "type": "SINGLE", "pricePerNight": 900.0 },
+  { "roomNumber": 102, "type": "DOUBLE", "pricePerNight": 1500.0 },
+  { "roomNumber": 103, "type": "SUITE", "pricePerNight": 2800.0 },
+  { "roomNumber": -5, "type": "SINGLE", "pricePerNight": 800.0 },
+  { "roomNumber": 101, "type": "DELUXE", "pricePerNight": 3500.0 }
+]

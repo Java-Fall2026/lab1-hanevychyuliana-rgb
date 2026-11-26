@@ -1,0 +1,5 @@
+[
+  { "passportNumber": "AA123456", "firstName": "Юліана", "lastName": "Ганевич", "birthDate": "2004-05-15" },
+  { "passportNumber": "BB654321", "firstName": "Олександр", "lastName": "Коваль", "birthDate": "1995-08-20" },
+  { "passportNumber": "bad", "firstName": "", "lastName": "Тест", "birthDate": "2000-01-01" }
+]

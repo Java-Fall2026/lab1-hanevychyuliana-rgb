@@ -1,0 +1,109 @@
+### 1. GET all rooms (200 OK)
+GET http://localhost:8080/api/rooms
+
+### 2. GET rooms with filters, sorting, and pagination (200 OK)
+GET http://localhost:8080/api/rooms?minPrice=500&sort=price&order=DESC&limit=5&offset=0
+
+### 3. GET room statistics (200 OK)
+GET http://localhost:8080/api/rooms/stats
+
+### 4. GET room by ID (200 OK)
+GET http://localhost:8080/api/rooms/101
+
+### 5. POST create new room (201 Created + Location)
+POST http://localhost:8080/api/rooms
+Content-Type: application/json
+
+{
+  "roomNumber": 301,
+  "type": "DELUXE",
+  "pricePerNight": 3400.0
+}
+
+### 6. PUT update existing room (200 OK)
+PUT http://localhost:8080/api/rooms/301
+Content-Type: application/json
+
+{
+  "roomNumber": 301,
+  "type": "DELUXE",
+  "pricePerNight": 3600.0
+}
+
+### 7. DELETE room by ID (204 No Content)
+DELETE http://localhost:8080/api/rooms/301
+
+### 8. GET all guests (200 OK)
+GET http://localhost:8080/api/guests
+
+### 9. GET guests with filter and sorting (200 OK)
+GET http://localhost:8080/api/guests?lastName=Ганевич&sort=birthDate&order=ASC
+
+### 10. GET guest statistics (200 OK)
+GET http://localhost:8080/api/guests/stats
+
+### 11. POST create guest with Ukrainian text (201 Created)
+POST http://localhost:8080/api/guests
+Content-Type: application/json; charset=UTF-8
+
+{
+  "passportNumber": "KH998877",
+  "firstName": "Тарас",
+  "lastName": "Шевченко",
+  "birthDate": "1990-03-09"
+}
+
+### 12. ERROR 400: Validation error (multiple violations including @ValidPassport)
+POST http://localhost:8080/api/guests
+Content-Type: application/json
+
+{
+  "passportNumber": "bad-id",
+  "firstName": "",
+  "lastName": "Петренко",
+  "birthDate": "1998-04-12"
+}
+
+### 13. ERROR 400: Malformed JSON
+POST http://localhost:8080/api/rooms
+Content-Type: application/json
+
+{ "roomNumber": 401, broken
+
+### 14. ERROR 400: Invalid query parameter
+GET http://localhost:8080/api/rooms?sort=unknown&order=SIDEWAYS&limit=-5
+
+### 15. ERROR 400: PUT body ID mismatch with path ID
+PUT http://localhost:8080/api/rooms/101
+Content-Type: application/json
+
+{
+  "roomNumber": 999,
+  "type": "SINGLE",
+  "pricePerNight": 900.0
+}
+
+### 16. ERROR 404: Resource not found
+GET http://localhost:8080/api/rooms/9999
+
+### 17. ERROR 404: Unknown route
+GET http://localhost:8080/api/unknown
+
+### 18. ERROR 405: Method Not Allowed
+DELETE http://localhost:8080/api/rooms
+
+### 19. ERROR 409: Duplicate identity conflict
+POST http://localhost:8080/api/rooms
+Content-Type: application/json
+
+{
+  "roomNumber": 101,
+  "type": "SINGLE",
+  "pricePerNight": 900.0
+}
+
+### 20. ERROR 415: Unsupported Media Type
+POST http://localhost:8080/api/rooms
+Content-Type: text/plain
+
+105,SINGLE,950.0

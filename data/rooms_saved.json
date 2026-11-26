@@ -1,0 +1,16 @@
+[ {
+  "roomNumber" : 101,
+  "type" : "SINGLE",
+  "pricePerNight" : 900.0,
+  "createdAt" : "2026-11-27T00:11:41.878889"
+}, {
+  "roomNumber" : 102,
+  "type" : "DOUBLE",
+  "pricePerNight" : 1500.0,
+  "createdAt" : "2026-11-27T00:11:41.892632"
+}, {
+  "roomNumber" : 103,
+  "type" : "SUITE",
+  "pricePerNight" : 2800.0,
+  "createdAt" : "2026-11-27T00:11:41.892717"
+} ]
